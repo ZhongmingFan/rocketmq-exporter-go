@@ -147,7 +147,7 @@ func Fly(
 ) {
 
 	InitMetricDesc()
-
+	registry := prometheus.NewRegistry()
 	exporter, err := NewExporter(opts)
 	if err != nil {
 		rlog.Fatal("create Exporter", map[string]interface{}{
@@ -158,9 +158,9 @@ func Fly(
 	defer exporter.admin.Close()
 	defer exporter.consumer.Shutdown()
 
-	prometheus.MustRegister(exporter)
+	registry.MustRegister(exporter)
 
-	http.Handle(metricsPath, promhttp.Handler())
+	http.Handle(metricsPath, promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`<html>
 	        <head><title>RocketMQ Exporter</title></head>
