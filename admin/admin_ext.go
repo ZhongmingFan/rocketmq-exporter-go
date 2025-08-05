@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"sync"
 	"time"
 
@@ -119,10 +120,16 @@ type ListTopicResponse struct {
 }
 
 func (admin *adminExt) QueryBrokerClusterInfo() (*ClusterInfo, error) {
+	if admin.namesrv == nil {
+		return nil, errors.Errorf("no namesrv exists")
+	}
+
 	clusterInfo, err := admin.namesrv.QueryBrokerClusterInfoFromServer()
+	if err != nil {
+		return nil, err
+	}
 
 	var brokerDataTable = make(map[string]*BrokerData)
-
 	for brokerName, broker := range clusterInfo.BrokerDataTable {
 		brokerDataTable[brokerName] = &BrokerData{
 			BrokerData: broker,
@@ -132,7 +139,7 @@ func (admin *adminExt) QueryBrokerClusterInfo() (*ClusterInfo, error) {
 	return &ClusterInfo{
 		ClusterInfo:   clusterInfo,
 		BrokerDataMap: brokerDataTable,
-	}, err
+	}, nil
 }
 
 func (admin *adminExt) ListTopic() ([]string, error) {
