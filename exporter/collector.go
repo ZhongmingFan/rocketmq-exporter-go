@@ -62,6 +62,7 @@ func (e *RocketmqExporter) collectForChans(quit chan struct{}) {
 // Describe describes all the metrics ever exported by the Rocketmq exporter. It
 // implements prometheus.Collector.
 func (e *RocketmqExporter) Describe(ch chan<- *prometheus.Desc) {
+	ch <- rocketmqUp
 	ch <- rocketmqGroupDiff
 	ch <- rocketmqGroupRetryDiff
 	ch <- rocketmqGroupDlqDiff

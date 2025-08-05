@@ -3,6 +3,7 @@ package exporter
 import "github.com/prometheus/client_golang/prometheus"
 
 var (
+	rocketmqUp                                                *prometheus.Desc
 	rocketmqGroupDiff                                         *prometheus.Desc
 	rocketmqGroupRetryDiff                                    *prometheus.Desc
 	rocketmqGroupDlqDiff                                      *prometheus.Desc
@@ -71,8 +72,8 @@ var (
 	rocketmqBrokeRuntimePutTps600                             *prometheus.Desc
 	rocketmqBrokeRuntimePutTps60                              *prometheus.Desc
 	rocketmqBrokeRuntimePutTps10                              *prometheus.Desc
-	rocketmqBrokeRuntimePutLatency99                        *prometheus.Desc
-	rocketmqBrokeRuntimePutLatency999                            *prometheus.Desc
+	rocketmqBrokeRuntimePutLatency99                          *prometheus.Desc
+	rocketmqBrokeRuntimePutLatency999                         *prometheus.Desc
 	rocketmqBrokeRuntimeDispatchMaxBuffer                     *prometheus.Desc
 	rocketmqBrokeRuntimePullThreadPoolQueueCapacity           *prometheus.Desc
 	rocketmqBrokeRuntimeSendThreadPoolQueueCapacity           *prometheus.Desc
@@ -104,6 +105,13 @@ func InitMetricDesc() {
 	var groupNumsLabelNames = []string{"cluster", "broker", "topic", "group"}
 	var topicNumsLabelNames = []string{"cluster", "broker", "topic"}
 	var brokerRuntimeMetricLabelNames = []string{"cluster", "brokerIP", "brokerVersion", "brokerVersionDes", "bootTime"}
+
+	// up metric
+	rocketmqUp = prometheus.NewDesc(
+		"rocketmq_up",
+		"Whether RocketMQ exporter is able to connect to RocketMQ", nil,
+		nil,
+	)
 
 	rocketmqGroupDiff = prometheus.NewDesc(
 		"rocketmq_group_diff",
