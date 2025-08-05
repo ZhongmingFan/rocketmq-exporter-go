@@ -41,7 +41,7 @@ func toFlagIntVar(name string, help string, value int, valueString string, targe
 func main() {
 
 	var (
-		listenAddress = toFlagString("web.listen-address", "Address to listen on for web interface and telemetry.", ":9999")
+		listenAddress = toFlagString("web.listen-address", "Address to listen on for web interface and telemetry.", ":9601")
 		metricsPath   = toFlagString("web.telemetry-path", "Path under which to expose metrics.", "/metrics")
 
 		logFileEnable = toFlagBool("log.file.enable", "Log write to file enable.", false, "false")
