@@ -80,6 +80,12 @@ func (e *RocketmqExporter) getRouteInfoByTopic(topic string) *admin.TopicRouteDa
 
 func (e *RocketmqExporter) getRandBrokerByTopic(topic string) *admin.BrokerData {
 	var routeInfo = e.getRouteInfoByTopic(topic)
+	if routeInfo == nil || len(routeInfo.BrokerDataList) == 0 {
+		rlog.Error("getRandBrokerByTopic: routeInfo is nil or BrokerDataList is empty", map[string]interface{}{
+			"topic": topic,
+		})
+		return nil
+	}
 	i := rand.Int()
 	i = i % len(routeInfo.BrokerDataList)
 	return routeInfo.BrokerDataList[i]

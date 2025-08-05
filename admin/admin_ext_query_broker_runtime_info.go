@@ -150,7 +150,6 @@ func newBrokerRuntimeInfo(kvInfo BrokerRuntimeKVInfo) *BrokerRuntimeInfo {
 	putLatency99, _ := strconv.ParseFloat(table["putLatency99"], 64)
 	putLatency999, _ := strconv.ParseFloat(table["putLatency999"], 64)
 
-
 	putMessageDistributeTime := buildPutMessageDistributeTime(table["putMessageDistributeTime"])
 
 	info := &BrokerRuntimeInfo{
@@ -203,8 +202,18 @@ func newBrokerRuntimeInfo(kvInfo BrokerRuntimeKVInfo) *BrokerRuntimeInfo {
 }
 
 func newPutTps(tpsStr string) *PutTps {
+	if tpsStr == "" {
+		rlog.Error("newPutTps: tpsStr is empty", nil)
+		return &PutTps{}
+	}
 
 	tps := strings.Split(tpsStr, " ")
+	if len(tps) < 3 {
+		rlog.Error("newPutTps: insufficient data in tpsStr", map[string]interface{}{
+			"tpsStr": tpsStr,
+		})
+		return &PutTps{}
+	}
 
 	ten, _ := strconv.ParseFloat(tps[0], 64)
 	sixty, _ := strconv.ParseFloat(tps[1], 64)

@@ -48,6 +48,12 @@ func (e *RocketmqExporter) collect(ch chan<- prometheus.Metric) {
 		for _, group := range groups {
 			var retryTopic = RetryGroupTopicPrefix + group
 			var broker = e.getRandBrokerByTopic(retryTopic)
+			if broker == nil {
+				rlog.Error("collectByTopic: failed to get random broker", map[string]interface{}{
+					"topic": retryTopic,
+				})
+				return
+			}
 			var brokerAddress = broker.SelectBrokerAddr()
 			onlineConsumerConnection, err := e.admin.QueryConsumerConnectionInfo(context.Background(), group, brokerAddress)
 			if err != nil {
