@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"github.com/apache/rocketmq-client-go/v2/rlog"
 	"strconv"
 
 	"github.com/rocketmq-exporter-go/internal"
@@ -45,6 +46,17 @@ func (consumeStats *ConsumeStats) decode(data []byte) {
 	})
 
 	for i := 0; i < len(values); i += 6 {
+		// 添加边界检查，确保有足够的数据
+		if i+LastTimestampIndex >= len(values) {
+			rlog.Error("ConsumeStats decode: insufficient data in values array", map[string]interface{}{
+				"valuesLength":       len(values),
+				"currentIndex":       i,
+				"requiredIndex":      i + LastTimestampIndex,
+				"LastTimestampIndex": LastTimestampIndex,
+			})
+			break // 跳出循环，避免访问越界
+		}
+
 		queueId, _ := strconv.Atoi(values[i+QueueIdIndex])
 		var messageQueue = &primitive.MessageQueue{
 			Topic:      values[i+TopicIndex],
