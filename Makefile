@@ -12,6 +12,7 @@ BIN_DIR=./weops/pipe-tools/bin
 # Go 环境配置
 GOPROXY=https://goproxy.cn,direct
 GOSUMDB=sum.golang.google.cn
+CGO_ENABLED=0
 
 # 获取版本信息
 GIT_TAG := $(shell git describe --tags --exact-match 2>/dev/null)
@@ -48,28 +49,28 @@ build: build-linux-amd64 build-linux-arm64 build-windows-amd64
 build-linux-amd64:
 	@echo "Building $(COMPONENT)_exporter_linux_amd64..."
 	@mkdir -p $(BIN_DIR)
-	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_amd64 main.go
+	CGO_ENABLED=$(CGO_ENABLED) GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_amd64 main.go
 
 # 构建 Linux ARM64 二进制
 .PHONY: build-linux-arm64
 build-linux-arm64:
 	@echo "Building $(COMPONENT)_exporter_linux_arm64..."
 	@mkdir -p $(BIN_DIR)
-	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_arm64 main.go
+	CGO_ENABLED=$(CGO_ENABLED) GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_arm64 main.go
 
 # 构建 Windows AMD64 二进制
 .PHONY: build-windows-amd64
 build-windows-amd64:
 	@echo "Building $(COMPONENT)_exporter_windows_amd64.exe..."
 	@mkdir -p $(BIN_DIR)
-	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_windows_amd64.exe main.go
+	CGO_ENABLED=$(CGO_ENABLED) GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_windows_amd64.exe main.go
 
 # 构建 Docker 镜像用的 Linux AMD64 二进制
 .PHONY: build-docker-binary
 build-docker-binary:
 	@echo "Building binary for Docker image..."
 	@mkdir -p $(BUILD_DIR)
-	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/rocketmq_exporter-linux-amd64 main.go
+	CGO_ENABLED=$(CGO_ENABLED) GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/rocketmq_exporter-linux-amd64 main.go
 
 # 构建 Docker 镜像
 .PHONY: build-image
@@ -92,13 +93,14 @@ clean:
 .PHONY: info
 info:
 	@echo "Building $(COMPONENT) exporter with:"
-	@echo "  Version:    $(VERSION)"
-	@echo "  Branch:     $(BRANCH)"
-	@echo "  Revision:   $(REVISION)"
-	@echo "  Build User: $(BUILD_USER)"
-	@echo "  Build Date: $(BUILD_DATE)"
-	@echo "  Output Dir: $(BIN_DIR)"
-	@echo "  GOPROXY:    $(GOPROXY)"
+	@echo "  Version:      $(VERSION)"
+	@echo "  Branch:       $(BRANCH)"
+	@echo "  Revision:     $(REVISION)"
+	@echo "  Build User:   $(BUILD_USER)"
+	@echo "  Build Date:   $(BUILD_DATE)"
+	@echo "  Output Dir:   $(BIN_DIR)"
+	@echo "  GOPROXY:      $(GOPROXY)"
+	@echo "  CGO_ENABLED:  $(CGO_ENABLED)"
 
 # 帮助信息
 .PHONY: help
@@ -115,3 +117,4 @@ help:
 	@echo ""
 	@echo "Output directory: $(BIN_DIR)"
 	@echo "GOPROXY: $(GOPROXY)"
+	@echo "CGO_ENABLED: $(CGO_ENABLED)"
