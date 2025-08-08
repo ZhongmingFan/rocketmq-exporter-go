@@ -9,6 +9,10 @@ DOCKER_TAG=latest
 BUILD_DIR=./weops/pipe-tools/docker
 BIN_DIR=./weops/pipe-tools/bin
 
+# Go 环境配置
+GOPROXY=https://goproxy.cn,direct
+GOSUMDB=sum.golang.google.cn
+
 # 获取版本信息
 GIT_TAG := $(shell git describe --tags --exact-match 2>/dev/null)
 ifdef GIT_TAG
@@ -44,28 +48,28 @@ build: build-linux-amd64 build-linux-arm64 build-windows-amd64
 build-linux-amd64:
 	@echo "Building $(COMPONENT)_exporter_linux_amd64..."
 	@mkdir -p $(BIN_DIR)
-	GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_amd64 main.go
+	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_amd64 main.go
 
 # 构建 Linux ARM64 二进制
 .PHONY: build-linux-arm64
 build-linux-arm64:
 	@echo "Building $(COMPONENT)_exporter_linux_arm64..."
 	@mkdir -p $(BIN_DIR)
-	GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_arm64 main.go
+	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_linux_arm64 main.go
 
 # 构建 Windows AMD64 二进制
 .PHONY: build-windows-amd64
 build-windows-amd64:
 	@echo "Building $(COMPONENT)_exporter_windows_amd64.exe..."
 	@mkdir -p $(BIN_DIR)
-	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_windows_amd64.exe main.go
+	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(COMPONENT)_exporter_windows_amd64.exe main.go
 
 # 构建 Docker 镜像用的 Linux AMD64 二进制
 .PHONY: build-docker-binary
 build-docker-binary:
 	@echo "Building binary for Docker image..."
 	@mkdir -p $(BUILD_DIR)
-	GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/rocketmq_exporter-linux-amd64 main.go
+	GOPROXY=$(GOPROXY) GOSUMDB=$(GOSUMDB) GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/rocketmq_exporter-linux-amd64 main.go
 
 # 构建 Docker 镜像
 .PHONY: build-image
@@ -94,6 +98,7 @@ info:
 	@echo "  Build User: $(BUILD_USER)"
 	@echo "  Build Date: $(BUILD_DATE)"
 	@echo "  Output Dir: $(BIN_DIR)"
+	@echo "  GOPROXY:    $(GOPROXY)"
 
 # 帮助信息
 .PHONY: help
@@ -109,3 +114,4 @@ help:
 	@echo "  help              - Show this help"
 	@echo ""
 	@echo "Output directory: $(BIN_DIR)"
+	@echo "GOPROXY: $(GOPROXY)"
