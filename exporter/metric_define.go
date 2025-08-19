@@ -109,7 +109,7 @@ func InitMetricDesc() {
 	// up metric
 	rocketmqUp = prometheus.NewDesc(
 		"rocketmq_up",
-		"Whether RocketMQ exporter is able to connect to RocketMQ", nil,
+		"Whether RocketMQ exporter is able to connect to RocketMQ", []string{"broker_name"},
 		nil,
 	)
 

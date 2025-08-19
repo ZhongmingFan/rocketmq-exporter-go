@@ -212,6 +212,7 @@ func (e *RocketmqExporter) collectRocketmqUp(ch chan<- prometheus.Metric) {
 				rocketmqUp,
 				prometheus.GaugeValue,
 				brokerUpValue,
+				brokerName,
 			)
 		}
 	}
