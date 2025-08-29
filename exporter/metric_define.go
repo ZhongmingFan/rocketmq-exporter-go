@@ -3,7 +3,6 @@ package exporter
 import "github.com/prometheus/client_golang/prometheus"
 
 var (
-	rocketmqUp                                                *prometheus.Desc
 	rocketmqGroupDiff                                         *prometheus.Desc
 	rocketmqGroupRetryDiff                                    *prometheus.Desc
 	rocketmqGroupDlqDiff                                      *prometheus.Desc
@@ -105,13 +104,6 @@ func InitMetricDesc() {
 	var groupNumsLabelNames = []string{"cluster", "broker", "topic", "group"}
 	var topicNumsLabelNames = []string{"cluster", "broker", "topic"}
 	var brokerRuntimeMetricLabelNames = []string{"cluster", "brokerIP", "brokerVersion", "brokerVersionDes", "bootTime"}
-
-	// up metric
-	rocketmqUp = prometheus.NewDesc(
-		"rocketmq_up",
-		"Whether RocketMQ exporter is able to connect to RocketMQ", []string{"broker_name"},
-		nil,
-	)
 
 	rocketmqGroupDiff = prometheus.NewDesc(
 		"rocketmq_group_diff",

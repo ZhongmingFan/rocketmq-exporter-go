@@ -13,8 +13,6 @@ import (
 )
 
 func (e *RocketmqExporter) collect(ch chan<- prometheus.Metric) {
-	// 首先收集连接状态指标
-	e.collectRocketmqUp(ch)
 
 	var startTime = time.Now().UnixMilli()
 
@@ -175,45 +173,4 @@ func (e *RocketmqExporter) collect(ch chan<- prometheus.Metric) {
 		"broker.master.size": len(e.brokerTable),
 	})
 
-}
-
-func (e *RocketmqExporter) collectRocketmqUp(ch chan<- prometheus.Metric) {
-	upValue := 1.0
-
-	// 检查是否能获取集群信息
-	if e.brokerTable == nil || len(e.brokerTable) == 0 {
-		upValue = 0.0
-		ch <- prometheus.MustNewConstMetric(
-			rocketmqUp,
-			prometheus.GaugeValue,
-			upValue,
-		)
-		return
-	}
-
-	// 为每个 broker 报告状态
-	for brokerName, broker := range e.brokerTable {
-		brokerUpValue := 1.0
-
-		// 尝试查询 broker 运行时信息来验证连接
-		ctx := context.Background()
-		for _, address := range broker.BrokerAddresses {
-			_, err := e.admin.QueryBrokerRuntimeInfo(ctx, address)
-			if err != nil {
-				brokerUpValue = 0.0
-				rlog.Error("Failed to query broker runtime info", map[string]interface{}{
-					"broker_name":    brokerName,
-					"broker_address": address,
-					"err":            err,
-				})
-			}
-
-			ch <- prometheus.MustNewConstMetric(
-				rocketmqUp,
-				prometheus.GaugeValue,
-				brokerUpValue,
-				brokerName,
-			)
-		}
-	}
 }
