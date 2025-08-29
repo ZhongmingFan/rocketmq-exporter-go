@@ -33,7 +33,6 @@ RocketMQ: 通用
 ### 指标简介
 | **指标ID**                                         | **指标中文名**         | **维度ID**                                                     | **维度含义**                                             | **单位** | **指标类型** |
 |--------------------------------------------------|-------------------|--------------------------------------------------------------|------------------------------------------------------|--------|----------|
-| rocketmq_up                                      | 监控插件运行状态          | -                                                            | -                                                    | -      | gauge    |
 | rocketmq_broker_tps                              | Broker每秒写入消息的数量   | broker, brokerIP, cluster                                    | Broker ID, Broker IP地址, 集群名称                         | -      | gauge    |
 | rocketmq_broker_qps                              | Broker每秒处理的消息请求总量 | broker, brokerIP, cluster                                    | Broker ID, Broker IP地址, 集群名称                         | -      | gauge    |
 | rocketmq_producer_message_size                   | 生产消息大小            | topic, broker, cluster                                       | 订阅主题, Broker ID, 集群名称                                | bytes  | gauge    |
@@ -77,5 +76,6 @@ RocketMQ: 通用
 
 - weops调整
 
-
+#### weops_RocketMQ_exporter v0.1.2
+- 去除up指标，解决集群报错问题
 
